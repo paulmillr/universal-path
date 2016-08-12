@@ -22,17 +22,6 @@ sysPath.relative()
 sysPath.resolve()
 sysPath.join()
 sysPath.dirname()
-
-exports.slashes = path => path.split('\\').join('/');
-exports.unslashes = path => path.split('/').join(exports.sep);
-
-['normalize', 'relative', 'resolve', 'join', 'dirname'].forEach(key => {
-  const fn = sysPath[key];
-  exports[key] = function() {
-    return exports.slashes(fn.apply(sysPath, arguments));
-  };
-});
-
 ```
 
 ## License
