@@ -1,16 +1,18 @@
 'use strict';
 const sysPath = require('path');
+const win = sysPath.win32;
 
-exports.isAbsolute = sysPath.isAbsolute;
-exports.basename = sysPath.basename;
-exports.sep = sysPath.sep;
+const slashes = path => path.replace(/\\/g, '/');
+const decorate = fn => function() {
+  return slashes(fn.apply(win, arguments));
+};
 
-exports.slashes = path => path.split('\\').join('/');
-exports.unslashes = path => path.split('/').join(exports.sep);
+exports.slashes = slashes;
 
-['normalize', 'relative', 'resolve', 'join', 'dirname'].forEach(key => {
-  const fn = sysPath[key];
-  exports[key] = function() {
-    return exports.slashes(fn.apply(sysPath, arguments));
-  };
-});
+for (const key of ['delimiter', 'extname', 'isAbsolute', 'posix', 'sep', 'win32']) {
+  exports[key] = sysPath[key];
+}
+
+for (const key of ['basename', 'dirname', 'join', 'normalize', 'relative', 'resolve']) {
+  exports[key] = decorate(win[key]);
+}
